@@ -29,7 +29,7 @@ jobs:
         run: |
           mkdir grapheneos-14
           cd grapheneos-14
-          repo init -u https://github.com/GrapheneOS/platform_manifest.git -b 14
+          repo init -u https://github.com/$GITHUB_REPOSITORY.git -b $GITHUB_REF_NAME
           repo sync -j8
           
       - name: Build GrapheneOS
