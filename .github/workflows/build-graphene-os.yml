@@ -23,7 +23,7 @@ jobs:
         run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update
-          apt install -y repo yarnpkg zip rsync python3 git gnupg
+          apt install --yes repo yarnpkg zip rsync python3 git gnupg
 
       - name: Download source code (dev branch)
         run: |
