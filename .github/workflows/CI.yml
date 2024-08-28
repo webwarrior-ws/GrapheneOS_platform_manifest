@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: self-hosted
+    container: 
+      image: ubuntu:22.04
+      
+    timeout-minutes: 600
+
+    steps:
+      - name: Include sbin in PATH
+        run: export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin
+        
+      - name: Install dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt update
+          apt install --yes repo yarnpkg zip rsync python3 git gnupg
+
+      - name: Download source code (dev branch)
+        run: |
+          mkdir grapheneos-14
+          cd grapheneos-14
+          repo init -u https://github.com/$GITHUB_REPOSITORY.git -b $GITHUB_REF_NAME
+          repo sync -j8
+          
+      - name: Build GrapheneOS
+        run: |
+          cd grapheneos-14
+          source build/envsetup.sh
+          # target x64 Android emulator
+          lunch sdk_phone64_x86_64-cur-user
+          # build default target (as recommended for emulator builds)
+          m
+          
+      - name: Upload build output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build_sdk_phone64_x86_64
+          path: grapheneos-14/out/target/product/emu64x/
